@@ -1,0 +1,5 @@
+name: MyPlugin
+main: com.example.plugin.MyPlugin
+version: 1.0
+# Set api-version to the minimum version in the nms classes
+api-version: 1.19
