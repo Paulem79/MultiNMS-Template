@@ -36,5 +36,6 @@ jobs:
       - name: 🆙 Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: 🔨 Build project
-        run: ./gradlew build
+      # FIXME: Spigot BT to maven repo before build action
+      #- name: 🔨 Build project
+      #  run: ./gradlew build
