@@ -12,22 +12,30 @@ jobs:
       - name: Define versions
         id: versions
         run: |
-          echo 'versions=["1.19.4", "1.20.1", "1.20.2", "1.20.4"]' >> "$GITHUB_OUTPUT"
+          echo 'versions=[{ name:"1.19.4", java: 17 }, { name:"1.20.1", java: 17 }, { name:"1.20.2", java: 17 }, { name:"1.20.4", java: 17 }]' >> "$GITHUB_OUTPUT"
 
   buildtools:
     name: 🔨 BuildTools
     runs-on: ubuntu-latest
     permissions: write-all
     needs: define-matrix
+
     strategy:
       matrix:
         versions: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
+
+    env:
+      VERSION_NAME: ${{ matrix.versions.name }}
+      JAVA_VERSION: ${{ matrix.versions.java }}
 
     steps:
       - name: ✅ Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Echo version
+        run: echo "Building for ${{ env.VERSION_NAME }} with java ${{ env.JAVA_VERSION }}"
 
       - name: ⬇ Download BuildTools
         run: |
@@ -39,13 +47,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 21
+          java-version: ${{ env.JAVA_VERSION }}
           java-package: jdk
 
       - name: 💪 Run BuildTools
         run: |
           cd buildtools
-          java -jar BuildTools.jar --rev ${{ matrix.versions }} --remapped
+          java -jar BuildTools.jar --rev ${{ env.VERSION_NAME }} --remapped
 
       - name: Home in env
         run:
@@ -53,7 +61,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: maven-repo-${{ matrix.versions }}
+          name: maven-repo-${{ env.VERSION_NAME }}
           path: ${{ env.HOME }}/.m2
 
   build:
@@ -63,23 +71,28 @@ jobs:
     needs:
       - define-matrix
       - buildtools
+
     strategy:
       matrix:
         versions: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
+
+    env:
+      VERSION_NAME: ${{ matrix.versions.name }}
+      JAVA_VERSION: ${{ matrix.versions.java }}
 
     steps:
       - name: ✅ Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Home in env
         run:
           echo "HOME=$HOME" >> $GITHUB_ENV
 
       - uses: actions/download-artifact@v4
         with:
-          name: maven-repo-${{ matrix.versions }}
+          name: maven-repo-${{ env.VERSION_NAME }}
           path: ${{ env.HOME }}/.m2
 
       - name: 🪄 Cache gradle
