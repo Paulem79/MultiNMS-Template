@@ -72,7 +72,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: maven-repo-${{ env.VERSION_NAME }}.zip
+          name: maven-repo-${{ env.VERSION_NAME }}
           path: ${{ env.HOME }}/maven-repo-${{ env.VERSION_NAME }}.zip
           include-hidden-files: 'true'
           if-no-files-found: 'error'
@@ -103,25 +103,25 @@ jobs:
       - name: Extract zip 1.19.4
         uses: ihiroky/extract-action@v1
         with:
-          file_path: ${{ env.HOME }}/maven-repo-1.19.4.zip
+          file_path: ${{ env.HOME }}/maven-repo-1.19.4/maven-repo-1.19.4.zip
           extract_dir: ${{ env.HOME }}/.m2
 
       - name: Extract zip 1.20.1
         uses: ihiroky/extract-action@v1
         with:
-          file_path: ${{ env.HOME }}/maven-repo-1.20.1.zip
+          file_path: ${{ env.HOME }}/maven-repo-1.20.1/maven-repo-1.20.1.zip
           extract_dir: ${{ env.HOME }}/.m2
 
       - name: Extract zip 1.20.2
         uses: ihiroky/extract-action@v1
         with:
-          file_path: ${{ env.HOME }}/maven-repo-1.20.2.zip
+          file_path: ${{ env.HOME }}/maven-repo-1.20.2/maven-repo-1.20.2.zip
           extract_dir: ${{ env.HOME }}/.m2
 
       - name: Extract zip 1.20.4
         uses: ihiroky/extract-action@v1
         with:
-          file_path: ${{ env.HOME }}/maven-repo-1.20.4.zip
+          file_path: ${{ env.HOME }}/maven-repo-1.20.4/maven-repo-1.20.4.zip
           extract_dir: ${{ env.HOME }}/.m2
 
       - name: 🪄 Cache gradle
