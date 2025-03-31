@@ -20,6 +20,7 @@ jobs:
     permissions: write-all
     needs: define-matrix
     strategy:
+      max-parallel: 1
       matrix:
         color: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
 
@@ -35,7 +36,7 @@ jobs:
           cd buildtools
           curl -L -o BuildTools.jar https://cdn.getbukkit.org/buildtools/BuildTools.jar
 
-      - name: 🛠️ Setup jdk 17
+      - name: 🛠️ Setup jdk 21
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
