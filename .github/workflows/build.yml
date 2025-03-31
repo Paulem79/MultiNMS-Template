@@ -95,10 +95,15 @@ jobs:
         with:
           path: ${{ env.HOME }}
 
-      - name: Move all subfolders contents to .m2
+      - name: 📂 Move contents to .m2
         run: |
-          mkdir -p ${{ env.HOME }}/.m2
-          find ${{ env.HOME }} -mindepth 2 -type f -exec mv -t ${{ env.HOME }}/.m2 {} +
+                for dir in ${{ env.HOME }}/*; do
+                  if [ -d "$dir" ]; then
+                    cp -rT "$dir" "${{ env.HOME }}/.m2"
+                  fi
+                done
+
+      # J'ai une structure tel que home contient les dossiers dossier1, dossier2, dossier3 etc. et que je veux que tout leur contenu, en gardant la même aborescence à l'intérieur de ceux-ci, soit déplacée vers .m2, en sur-écrivant sur des fichiers si nécessaire
 
       - name: 🪄 Cache gradle
         uses: actions/cache@v4
