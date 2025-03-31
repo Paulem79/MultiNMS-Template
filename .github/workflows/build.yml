@@ -3,13 +3,14 @@ on: [pull_request, push]
 
 jobs:
   define-matrix:
+    name: 🧩 Define matrix
     runs-on: ubuntu-latest
 
     outputs:
       versions: ${{ steps.versions.outputs.versions }}
 
     steps:
-      - name: Define versions
+      - name: 🧩 Define versions
         id: versions
         run: |
           echo 'versions=[{ name:"1.19.4", java: 17 }, { name:"1.20.1", java: 17 }, { name:"1.20.2", java: 17 }, { name:"1.20.4", java: 17 }]' >> "$GITHUB_OUTPUT"
@@ -35,10 +36,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Echo version
+      - name: 🗣️ Echo version
         run: echo "Building for ${{ env.VERSION_NAME }} with java ${{ env.JAVA_VERSION }}"
 
-      - name: ⬇ Download BuildTools
+      - name: 📥 Download BuildTools
         run: |
           mkdir -p buildtools
           cd buildtools
@@ -51,11 +52,11 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           java-package: jdk
 
-      - name: Home in env
+      - name: 🏠 Home in env
         run:
           echo "HOME=$HOME" >> $GITHUB_ENV
 
-      - name: Create maven repo
+      - name: 📂 Create maven repo
         run: |
           mkdir -p ${{ env.HOME }}/.m2
 
@@ -64,7 +65,7 @@ jobs:
           cd buildtools
           java -jar BuildTools.jar --rev ${{ env.VERSION_NAME }} --remapped
 
-      - name: Upload maven repo
+      - name: 📦 Upload maven repo
         uses: actions/upload-artifact@v4
         with:
           name: maven-repo-${{ env.VERSION_NAME }}
@@ -86,24 +87,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Home in env
+      - name: 🏠 Home in env
         run:
           echo "HOME=$HOME" >> $GITHUB_ENV
 
-      - name: Download maven repo
+      - name: 📥 Download maven repo
         uses: actions/download-artifact@v4
         with:
           path: ${{ env.HOME }}
 
       - name: 📂 Move contents to .m2
         run: |
-                for dir in ${{ env.HOME }}/*; do
+                for dir in ${{ env.HOME }}/maven-repo-*; do
                   if [ -d "$dir" ]; then
                     cp -rT "$dir" "${{ env.HOME }}/.m2"
                   fi
                 done
-
-      # J'ai une structure tel que home contient les dossiers dossier1, dossier2, dossier3 etc. et que je veux que tout leur contenu, en gardant la même aborescence à l'intérieur de ceux-ci, soit déplacée vers .m2, en sur-écrivant sur des fichiers si nécessaire
 
       - name: 🪄 Cache gradle
         uses: actions/cache@v4
@@ -131,3 +130,8 @@ jobs:
 
       - name: 🔨 Build project
         run: ./gradlew build
+
+      - name: 🗑️ Delete artifacts (✨ DMCA ✨)
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: *
