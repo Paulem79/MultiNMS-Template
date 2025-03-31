@@ -95,9 +95,9 @@ jobs:
         run:
           echo "HOME=$HOME" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v4
+      - name: Download compiled jars
+        uses: actions/download-artifact@v4
         with:
-          name: maven-repo-${{ env.VERSION_NAME }}
           path: ${{ env.HOME }}
 
       - name: Extract zip 1.19.4
