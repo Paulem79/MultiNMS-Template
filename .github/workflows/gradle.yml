@@ -21,6 +21,7 @@ jobs:
     needs: define-matrix
 
     strategy:
+      fail-fast: true
       matrix:
         versions: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
 
@@ -50,23 +51,31 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           java-package: jdk
 
-      - name: 💪 Run BuildTools
-        run: |
-          cd buildtools
-          java -jar BuildTools.jar --rev ${{ env.VERSION_NAME }} --remapped
-
       - name: Home in env
         run:
           echo "HOME=$HOME" >> $GITHUB_ENV
 
       - name: Create maven repo
         run: |
-          mkdir -p $HOME/.m2
+          mkdir -p ${{ env.HOME }}/.m2
+
+      - name: 💪 Run BuildTools
+        run: |
+          cd buildtools
+          java -jar BuildTools.jar --rev ${{ env.VERSION_NAME }} --remapped
+
+      - name: Create zip
+        uses: ihiroky/archive-action@v1
+        with:
+          root_dir: ${{ env.HOME }}/.m2
+          file_path: ${{ env.HOME }}/maven-repo-${{ env.VERSION_NAME }}.zip
 
       - uses: actions/upload-artifact@v4
         with:
           name: maven-repo-${{ env.VERSION_NAME }}
-          path: ${{ env.HOME }}/.m2
+          path: ${{ env.HOME }}/maven-repo-${{ env.VERSION_NAME }}.zip
+          include-hidden-files: 'true'
+          if-no-files-found: 'error'
 
   build:
     name: 🔨 Build project
@@ -75,14 +84,6 @@ jobs:
     needs:
       - define-matrix
       - buildtools
-
-    strategy:
-      matrix:
-        versions: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
-
-    env:
-      VERSION_NAME: ${{ matrix.versions.name }}
-      JAVA_VERSION: ${{ matrix.versions.java }}
 
     steps:
       - name: ✅ Checkout repository
@@ -97,7 +98,31 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: maven-repo-${{ env.VERSION_NAME }}
-          path: ${{ env.HOME }}/.m2
+          path: ${{ env.HOME }}
+
+      - name: Extract zip 1.19.4
+        uses: ihiroky/extract-action@v1
+        with:
+          file_path: ${{ env.HOME }}/maven-repo-1.19.4.zip
+          extract_dir: ${{ env.HOME }}/.m2
+
+      - name: Extract zip 1.20.1
+        uses: ihiroky/extract-action@v1
+        with:
+          file_path: ${{ env.HOME }}/maven-repo-1.20.1.zip
+          extract_dir: ${{ env.HOME }}/.m2
+
+      - name: Extract zip 1.20.2
+        uses: ihiroky/extract-action@v1
+        with:
+          file_path: ${{ env.HOME }}/maven-repo-1.20.2.zip
+          extract_dir: ${{ env.HOME }}/.m2
+
+      - name: Extract zip 1.20.4
+        uses: ihiroky/extract-action@v1
+        with:
+          file_path: ${{ env.HOME }}/maven-repo-1.20.4.zip
+          extract_dir: ${{ env.HOME }}/.m2
 
       - name: 🪄 Cache gradle
         uses: actions/cache@v4
