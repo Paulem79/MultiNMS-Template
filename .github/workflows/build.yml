@@ -92,6 +92,7 @@ jobs:
       - name: 📥 Download maven repo
         uses: actions/download-artifact@v4
         with:
+          name: maven-repo-*
           path: ${{ env.HOME }}
 
       - name: 📂 Move contents to .m2
