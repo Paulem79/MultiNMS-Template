@@ -89,11 +89,13 @@ jobs:
         run:
           echo "HOME=$HOME" >> $GITHUB_ENV
 
-      - name: 📥 Download maven repo
-        uses: actions/download-artifact@v4
+      - name: 📥 Download maven repos
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v9
         with:
           name: maven-repo-*
           path: ${{ env.HOME }}
+          name_is_regexp: true
 
       - name: 📂 Move contents to .m2
         run: |
@@ -130,7 +132,7 @@ jobs:
       - name: 🔨 Build project
         run: ./gradlew build
 
-      - name: 🗑️ Delete artifacts (✨ DMCA ✨)
+      - name: 🗑️ Delete maven repos (✨ DMCA ✨)
         uses: geekyeggo/delete-artifact@v5
         with:
           name: maven-repo-*
