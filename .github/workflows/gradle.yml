@@ -21,7 +21,7 @@ jobs:
     needs: define-matrix
     strategy:
       matrix:
-        color: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
+        versions: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
 
     steps:
       - name: ✅ Checkout repository
@@ -42,21 +42,18 @@ jobs:
           java-version: 21
           java-package: jdk
 
-      - name: Echo home
-        run:
-          echo $HOME
-      - name: Echo maven home
-        run:
-          echo ${{ env.HOME }}
-
       - name: 💪 Run BuildTools
         run: |
           cd buildtools
-          java -jar BuildTools.jar --rev ${{ matrix.version }} --remapped
+          java -jar BuildTools.jar --rev ${{ matrix.versions }} --remapped
+
+      - name: Home in env
+        run:
+          echo "HOME=$HOME" >> $GITHUB_ENV
 
       - uses: actions/upload-artifact@v4
         with:
-          name: maven-repo-${{ matrix.version }}
+          name: maven-repo-${{ matrix.versions }}
           path: ${{ env.HOME }}/.m2
 
   build:
@@ -68,17 +65,21 @@ jobs:
       - buildtools
     strategy:
       matrix:
-        color: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
+        versions: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
 
     steps:
       - name: ✅ Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          
+      - name: Home in env
+        run:
+          echo "HOME=$HOME" >> $GITHUB_ENV
 
       - uses: actions/download-artifact@v4
         with:
-          name: maven-repo-${{ matrix.version }}
+          name: maven-repo-${{ matrix.versions }}
           path: ${{ env.HOME }}/.m2
 
       - name: 🪄 Cache gradle
