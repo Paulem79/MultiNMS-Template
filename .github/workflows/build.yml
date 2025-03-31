@@ -90,12 +90,7 @@ jobs:
           echo "HOME=$HOME" >> $GITHUB_ENV
 
       - name: 📥 Download maven repos
-        id: download-artifact
-        uses: dawidd6/action-download-artifact@v9
-        with:
-          name: ^maven-repo-.*$
-          path: ${{ env.HOME }}
-          name_is_regexp: true
+        uses: actions/download-artifact@v4
 
       - name: 📂 Move contents to .m2
         run: |
