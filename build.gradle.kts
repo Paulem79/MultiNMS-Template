@@ -1,3 +1,5 @@
+// TODO: Add newer NMS versions
+
 plugins {
     java
 
