@@ -2,14 +2,26 @@ name: 🔨 Build
 on: [pull_request, push]
 
 jobs:
+  define-matrix:
+    runs-on: ubuntu-latest
+
+    outputs:
+      versions: ${{ steps.versions.outputs.versions }}
+
+    steps:
+      - name: Define versions
+        id: versions
+        run: |
+          echo 'versions=["1.19.4", "1.20.1", "1.20.2", "1.20.4"]' >> "$GITHUB_OUTPUT"
+
   buildtools:
     name: 🔨 BuildTools
     runs-on: ubuntu-latest
     permissions: write-all
-
+    needs: define-matrix
     strategy:
       matrix:
-        version: ["1.19.4", "1.20.1", "1.20.2", "1.20.4"]
+        color: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
 
     steps:
       - name: ✅ Checkout repository
@@ -51,10 +63,12 @@ jobs:
     name: 🔨 Build project
     runs-on: ubuntu-latest
     permissions: write-all
-
+    needs:
+      - define-matrix
+      - buildtools
     strategy:
       matrix:
-        version: ["1.19.4", "1.20.1", "1.20.2", "1.20.4"]
+        color: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
 
     steps:
       - name: ✅ Checkout repository
