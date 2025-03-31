@@ -134,4 +134,4 @@ jobs:
       - name: 🗑️ Delete artifacts (✨ DMCA ✨)
         uses: geekyeggo/delete-artifact@v5
         with:
-          name: *
+          name: maven-repo-*
