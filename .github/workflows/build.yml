@@ -64,16 +64,11 @@ jobs:
           cd buildtools
           java -jar BuildTools.jar --rev ${{ env.VERSION_NAME }} --remapped
 
-      - name: Create zip
-        uses: ihiroky/archive-action@v1
-        with:
-          root_dir: ${{ env.HOME }}/.m2
-          file_path: ${{ env.HOME }}/maven-repo-${{ env.VERSION_NAME }}.zip
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload maven repo
+        uses: actions/upload-artifact@v4
         with:
           name: maven-repo-${{ env.VERSION_NAME }}
-          path: ${{ env.HOME }}/maven-repo-${{ env.VERSION_NAME }}.zip
+          path: ${{ env.HOME }}/.m2
           include-hidden-files: 'true'
           if-no-files-found: 'error'
 
@@ -95,34 +90,15 @@ jobs:
         run:
           echo "HOME=$HOME" >> $GITHUB_ENV
 
-      - name: Download compiled jars
+      - name: Download maven repo
         uses: actions/download-artifact@v4
         with:
           path: ${{ env.HOME }}
 
-      - name: Extract zip 1.19.4
-        uses: ihiroky/extract-action@v1
-        with:
-          file_path: ${{ env.HOME }}/maven-repo-1.19.4/maven-repo-1.19.4.zip
-          extract_dir: ${{ env.HOME }}/.m2
-
-      - name: Extract zip 1.20.1
-        uses: ihiroky/extract-action@v1
-        with:
-          file_path: ${{ env.HOME }}/maven-repo-1.20.1/maven-repo-1.20.1.zip
-          extract_dir: ${{ env.HOME }}/.m2
-
-      - name: Extract zip 1.20.2
-        uses: ihiroky/extract-action@v1
-        with:
-          file_path: ${{ env.HOME }}/maven-repo-1.20.2/maven-repo-1.20.2.zip
-          extract_dir: ${{ env.HOME }}/.m2
-
-      - name: Extract zip 1.20.4
-        uses: ihiroky/extract-action@v1
-        with:
-          file_path: ${{ env.HOME }}/maven-repo-1.20.4/maven-repo-1.20.4.zip
-          extract_dir: ${{ env.HOME }}/.m2
+      - name: Move all subfolders contents to .m2
+        run: |
+          mkdir -p ${{ env.HOME }}/.m2
+          find ${{ env.HOME }} -mindepth 2 -type f -exec mv -t ${{ env.HOME }}/.m2 {} +
 
       - name: 🪄 Cache gradle
         uses: actions/cache@v4
