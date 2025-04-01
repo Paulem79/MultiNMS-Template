@@ -2,30 +2,52 @@ name: 🔨 Build
 on: [pull_request, push]
 
 jobs:
-  define-matrix:
-    name: 🧩 Define matrix
-    runs-on: ubuntu-latest
-
-    outputs:
-      versions: ${{ steps.versions.outputs.versions }}
-
-    steps:
-      - name: 🧩 Define versions
-        id: versions
-        # TODO: Analyse subprojects gradle.properties for version and java version
-        run: |
-          echo 'versions=[{ name:"1.19.4", java: 17 }, { name:"1.20.1", java: 17 }, { name:"1.20.2", java: 17 }, { name:"1.20.4", java: 17 }]' >> "$GITHUB_OUTPUT"
-
   buildtools:
     name: 🔨 BuildTools
     runs-on: ubuntu-latest
     permissions: write-all
-    needs: define-matrix
 
     strategy:
       fail-fast: true
       matrix:
-        versions: ${{ fromJSON(needs.define-matrix.outputs.versions) }}
+        versions: [
+          {
+            name: 1.19.4,
+            java: 17
+          },
+          {
+            name: 1.20.1,
+            java: 17
+          },
+          {
+            name: 1.20.2,
+            java: 17
+          },
+          {
+            name: 1.20.4,
+            java: 17
+          },
+          {
+            name: 1.20.6,
+            java: 21
+          },
+          {
+            name: 1.21.1,
+            java: 21
+          },
+          {
+            name: 1.21.3,
+            java: 21
+          },
+          {
+            name: 1.21.4,
+            java: 21
+          },
+          {
+            name: 1.21.5,
+            java: 21
+          },
+        ]
 
     env:
       VERSION_NAME: ${{ matrix.versions.name }}
@@ -100,11 +122,11 @@ jobs:
             fi
           done
 
-      - name: 🛠️ Setup jdk 21
+      - name: 🛠️ Setup jdk 17
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 21
+          java-version: 17
           java-package: jdk
           cache: gradle
 
