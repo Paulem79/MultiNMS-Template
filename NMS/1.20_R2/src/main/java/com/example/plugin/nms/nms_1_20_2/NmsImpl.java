@@ -1,11 +1,12 @@
 package com.example.plugin.nms.nms_1_20_2;
 
 import com.example.plugin.nms.Nms;
-import net.minecraft.server.MinecraftServer;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 
 public class NmsImpl implements Nms {
     @Override
     public double getTPS(int i) {
-        return MinecraftServer.getServer().recentTps[i];
+        return ((CraftServer) Bukkit.getServer()).getServer().recentTps[i];
     }
 }

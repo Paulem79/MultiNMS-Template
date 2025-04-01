@@ -7,6 +7,9 @@ plugins {
     id("io.github.patrick.remapper")
 }
 
+val projectJava = JavaLanguageVersion.of(21)
+val targetJava = 17
+
 // Check if a project has the remap task and is not the root project
 fun Project.usesReobfuscatedJar(proj: Project) : Boolean {
     return proj.tasks.findByName("remap") != null && proj.name != rootProject.name
@@ -59,6 +62,25 @@ allprojects {
         if(usesReobfuscatedJar(this@allprojects)) {
             // Get the mcVersion specified in gradle.properties
             val mcVersion = properties["mcVersion"].toString()
+            val javaVersion = if(properties["javaVersion"] != null) {
+                Integer.valueOf(properties["javaVersion"].toString())
+            } else {
+                targetJava
+            }
+
+            java {
+                toolchain {
+                    languageVersion.set(JavaLanguageVersion.of(javaVersion))
+                }
+            }
+
+            tasks.withType<JavaCompile> {
+                options.release = targetJava
+                targetJava.toString().let {
+                    sourceCompatibility = it
+                    targetCompatibility = it
+                }
+            }
 
             // Configure the remap task
             tasks.remap {
@@ -119,6 +141,20 @@ tasks.compileJava {
 // Shade everything into a single jar
 tasks.assemble {
     dependsOn(tasks.shadowJar)
+}
+
+java {
+    toolchain {
+        languageVersion.set(projectJava)
+    }
+}
+
+tasks.withType<JavaCompile> {
+    options.release = targetJava
+    targetJava.toString().let {
+        sourceCompatibility = it
+        targetCompatibility = it
+    }
 }
 
 // Edit this if you update the gradle wrapper

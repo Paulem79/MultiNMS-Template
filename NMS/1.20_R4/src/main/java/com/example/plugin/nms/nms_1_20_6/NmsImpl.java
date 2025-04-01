@@ -1,8 +1,8 @@
-package com.example.plugin.nms.nms_1_20_1;
+package com.example.plugin.nms.nms_1_20_6;
 
 import com.example.plugin.nms.Nms;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
 
 public class NmsImpl implements Nms {
     @Override
