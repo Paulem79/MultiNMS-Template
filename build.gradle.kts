@@ -159,6 +159,6 @@ tasks.withType<JavaCompile> {
 
 // Edit this if you update the gradle wrapper
 tasks.wrapper {
-    gradleVersion = "8.14.1"
+    gradleVersion = "8.14.2"
     distributionType = Wrapper.DistributionType.ALL
 }
