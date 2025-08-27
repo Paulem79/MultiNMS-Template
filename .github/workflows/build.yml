@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: 🛠️ Setup jdk ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: ${{ env.JAVA_VERSION }}
@@ -94,7 +94,7 @@ jobs:
           done
 
       - name: 🛠️ Setup jdk 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: 17
