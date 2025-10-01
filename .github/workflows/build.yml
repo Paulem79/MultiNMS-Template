@@ -111,7 +111,7 @@ jobs:
             ${{ runner.os }}-gradle0-
 
       - name: ✅ Validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
 
       - name: 🆙 Grant execute permission for gradlew
         run: chmod +x gradlew
