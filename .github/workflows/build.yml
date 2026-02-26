@@ -57,7 +57,7 @@ jobs:
           buildToolProvider: SpigotMC
 
       - name: 📦 Upload maven repo
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: maven-repo-${{ env.VERSION_NAME }}
           path: ${{ env.HOME }}/.m2
@@ -81,7 +81,7 @@ jobs:
           echo "HOME=$HOME" >> $GITHUB_ENV
 
       - name: 📥 Download maven repos
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           path: ${{ env.HOME }}
 
