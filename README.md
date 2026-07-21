@@ -7,10 +7,6 @@
     <img src="https://img.shields.io/github/stars/Paulem79/MultiNMS-Template">
 </div>
 
-<div align="center">
-    <img src="https://github.com/Paulem79/MultiNMS-Template/actions/workflows/gradle.yml/badge.svg">
-</div>
-
 ---
 
 ## Installation ⭐
